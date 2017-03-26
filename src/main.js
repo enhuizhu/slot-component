@@ -65,7 +65,7 @@ class App extends React.Component {
         const slots = [];
 
         for(let i = 0; i < this._data.cols; i++) {
-            slots.push(<td key={i}><Slot images={this._data.images} ref={`slot${i}`}></Slot></td>);
+            slots.push(<td key={i}><Slot images={this._data.images} ref={`slot${i}`} startImgIndex={0} stopImgIndex={1}></Slot></td>);
         }
 
         return (<table>

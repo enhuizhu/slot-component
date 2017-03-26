@@ -7,11 +7,12 @@ import TWEEN from 'tween.js';
 class Slot extends React.Component {
     constructor(props) {
         super(props);
-        this.cachCanvas = document.createElement('canvas');
-        this.cachCtx = this.cachCanvas.getContext('2d');
         this.slotRepeatTimes = 5;
         this.slotHeight = this.slotRepeatTimes * this.props.imgHeight * this.props.images.length;
+        this.cachCanvas = document.createElement('canvas');
+        this.cachCtx = this.cachCanvas.getContext('2d');
         this.cachCanvas.setAttribute('height', this.slotHeight);
+        this.hasSpined = false;
         this.aniObj = {
             slotPos : 0
         }
@@ -19,23 +20,48 @@ class Slot extends React.Component {
 
     componentDidMount() {
         this.ctx = this.refs['slot'].getContext('2d');
-        const slotImages = slotHelper.generateSlotImages(this.props.images, this.slotRepeatTimes);
-        this._drawImagesInCachCanvas(slotImages);
-        // this._drawSlot();
+        this.messImages = slotHelper.messImages(this.props.images);
+
+        this.messStartIndex = this._getImgIndexInImgArr(this.props.images[this.props.startImgIndex], this.messImages);
+        this.messStopIndex = this._getImgIndexInImgArr(this.props.images[this.props.stopImgIndex], this.messImages);        
+
+
+        // console.log(this.messStartIndex, this.messStopIndex);
+
+        this.slotImages = slotHelper.generateSlotImages(this.messImages, this.slotRepeatTimes);
+        this._drawImagesInCachCanvas(this.slotImages);
         this._InitSlot();
     }
 
+    _getImgIndexInImgArr(img, imgArr) {
+        for(let i in imgArr) {
+            if (img.src === imgArr[i].src) {
+                return parseInt(i);
+            }
+        }
+
+        return false;
+    }
+
+    _clear() {
+        this.ctx.clearRect(0, 0, this.refs['slot'].width, this.refs['slot'].height);
+    }
+
     _InitSlot() {
-        this.aniObj.slotPos = this._InitSlotPos();
+        this.aniObj.slotPos = this._InitSlotPos(this.hasSpined ? this.messStopIndex : this.messStartIndex);
+        // console.log('init slot pos is:', this.aniObj);
         this._drawSlot();
     }
 
     _start() {
+        this.hasSpined = true;
         //Linear, Quadratic, Cubic, Quartic, Quintic, Sinusoidal, Exponential, Circular, Elastic, Back and Bounce, and then by the easing type: In, Out and InOut
         setTimeout(() => {
+            let stopPos = slotHelper.getStopPos(this.props.images.length, this.props.canvasHeight, this.props.imgHeight, this.messStopIndex);
+            
             new TWEEN.Tween(this.aniObj)
-                .to({slotPos: 0}, 3000)
-                .easing(TWEEN.Easing.Cubic.InOut)
+                .to({slotPos: stopPos}, 3000)
+                .easing(TWEEN.Easing.Back.InOut)
                 .onUpdate(() => {
                     // console.log(this.aniObj);
                 })
@@ -45,11 +71,12 @@ class Slot extends React.Component {
         }, this.props.delay);
     }
 
-    _InitSlotPos() {
-        return -this.slotHeight + this.props.canvasHeight;    
+    _InitSlotPos(index) {
+        return slotHelper.getStartPos(this.props.images.length, this.props.canvasHeight, this.props.imgHeight, this.slotRepeatTimes, index);
     }
 
     _drawSlot() {
+        this._clear();
         this.ctx.drawImage(this.cachCanvas, 0, this.aniObj.slotPos);        
     }
 
@@ -69,7 +96,7 @@ class Slot extends React.Component {
     }
 
     render() {
-        return <canvas ref='slot' width={this.props.canvasWidth} height={this.props.canvasHeight}>
+        return <canvas ref='slot' width={this.props.imgWidth} height={this.props.canvasHeight}>
         </canvas>;
     }
 }
@@ -77,10 +104,10 @@ class Slot extends React.Component {
 Slot.propTypes = {
     images: React.PropTypes.array,
     stopImgIndex: React.PropTypes.number,
+    startImgIndex: React.PropTypes.number,
     delay: React.PropTypes.number,
     imgWidth: React.PropTypes.number,
     imgHeight: React.PropTypes.number,
-    canvasWidth: React.PropTypes.number,
     canvasHeight: React.PropTypes.number,
     animationDuration: React.PropTypes.number,
     animationEndCallback: React.PropTypes.func
@@ -88,12 +115,12 @@ Slot.propTypes = {
 
 Slot.defaultProps = {
     images: [],
+    startImgIndex: 0,
     stopImgIndex: 0,
     delay: 0,
     imgWidth: 100,
     imgHeight: 100,
     canvasHeight: 300,
-    canvasWidth: 100,
     animationDuration: 3,
     animationEndCallback: () => {}
 };
