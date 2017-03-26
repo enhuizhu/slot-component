@@ -7,7 +7,7 @@ import TWEEN from 'tween.js';
 class Slot extends React.Component {
     constructor(props) {
         super(props);
-        this.slotRepeatTimes = 5;
+        this.slotRepeatTimes = 7;
         this.slotHeight = this.slotRepeatTimes * this.props.imgHeight * this.props.images.length;
         this.cachCanvas = document.createElement('canvas');
         this.cachCtx = this.cachCanvas.getContext('2d');
