@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import Slot from './components/slot';
+import WebglSlot from './components/webglSlot';
 
 class App extends React.Component {
     constructor() {
@@ -65,7 +66,7 @@ class App extends React.Component {
         const slots = [];
 
         for(let i = 0; i < this._data.cols; i++) {
-            slots.push(<td key={i}><Slot images={this._data.images} ref={`slot${i}`} startImgIndex={0} stopImgIndex={1}></Slot></td>);
+            slots.push(<td key={i}><WebglSlot images={this._data.images} ref={`slot${i}`} startImgIndex={0} stopImgIndex={1}></WebglSlot></td>);
         }
 
         return (<table>

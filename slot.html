@@ -1,0 +1,128 @@
+<doctype html>
+<html>
+<head>
+    <title>slot</title>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+</head>            
+<body>
+
+<div id='slot-container'></div>
+<div id='test-container'></div>
+
+<script type="text/javascript">
+
+    var IMG_MACHINE = "http://res.cloudinary.com/rmarcello/image/upload/v1433512041/slot-machine_orizontal_ygxsnm.png";             
+            var SLOT_NUMBER=3;
+            
+            var camera, scene, renderer;
+            var meshes;
+            var bodyMesh;
+            var width = 300;
+            var height = 300;
+            var texture = null;
+            
+            init();
+            
+            function init() {
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera( 100, width/height, 0.1, 1000 );
+
+                renderer = new THREE.WebGLRenderer();
+                renderer.setSize( width, height );
+                document.getElementById('slot-container').appendChild( renderer.domElement );
+
+                //slot machine elements
+                // var geometry = new THREE.CylinderGeometry( 20, 20, 20, 32 );
+                geometry = new THREE.BoxGeometry( 200, 200, 200 );
+                
+                createSlotElementMaterial().then((material) => {
+                    console.log('material', material);
+                    meshes=[];
+                    for(var i=0; i< SLOT_NUMBER ; i++) {
+                        meshes[i] = new THREE.Mesh(geometry, material);
+                        meshes[i].name = 'slot_'+i;
+                        meshes[i].position.x = ((20+5)*i) - 30;
+                        meshes[i].rotation.z = Math.PI/2;
+                        meshes[i].rotation.x = 0.5;
+                        scene.add( meshes[i] );
+                    }
+                    // //slot machine body
+                    // var bodyGeometry = new THREE.BoxGeometry( 100, 100, 20 );
+                    // var bodyTexture = THREE.ImageUtils.loadTexture( 'http://threejs.org/examples/textures/crate.gif' );
+                    // //bodyTexture.anisotropy = renderer.getMaxAnisotropy();    
+                    
+                    // var bodyMaterial = new THREE.MeshBasicMaterial( { map: bodyTexture } );
+                    // bodyMesh = new THREE.Mesh( bodyGeometry, bodyMaterial );
+                    // bodyMesh.position.x=0;
+                    // bodyMesh.position.y=0;
+                    // bodyMesh.position.z=5;
+                    // scene.add( bodyMesh );
+                    //camera
+                    camera.position.z = 80;
+                    window.addEventListener( 'resize', onWindowResize, false );
+
+                    animate();
+                });
+            }
+            
+            var x=1000;
+            function animate() {
+                console.log('here it is!');
+
+                requestAnimationFrame( animate );
+                
+                x=x-1;
+                    if(x<=0) {
+                        return ;
+                    }
+                for(var i=0; i< SLOT_NUMBER ; i++) {
+                    meshes[i].rotation.x += 0.010*((i+1)^2*3);
+                    
+                }
+
+                renderer.render(scene, camera);
+            };
+
+            
+            
+            
+            function createSlotElementMaterial() {
+                THREE.ImageUtils.crossOrigin = '';
+                var t = THREE.ImageUtils.loadTexture( './images/apple.png' );// "slot-machine.png"
+                t.wrapS = THREE.RepeatWrapping;
+                t.wrapT = THREE.RepeatWrapping;
+                //t.offset.x = 90/(2*Math.PI);
+
+                var canvas = document.createElement('canvas');
+                canvas.setAttribute('width', 300);
+                canvas.setAttribute('height', 300);
+                
+                var ctx = canvas.getContext('2d');
+                var img = new Image();
+                img.src = './images/apple.png';
+                
+                return new Promise((resolve, reject) => {
+                    img.onload = () => {
+                        ctx.drawImage(img, 0, 0, 100, 100);
+                        
+                        texture = new THREE.Texture(canvas);
+                        // texture.wrapS = THREE.RepeatWrapping;
+                        // texture.wrapT = THREE.RepeatWrapping; 
+                        var m = new THREE.MeshBasicMaterial();
+                        m.map = texture;
+                        resolve(m);
+
+                        document.getElementById('test-container').appendChild(canvas);
+                    }
+                });
+            }
+            
+            function onWindowResize() {
+                texture.needsUpdate = true;
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize( width, height );
+            }
+</script>
+</body>
+</html>
