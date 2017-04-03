@@ -18,7 +18,7 @@ class WebGlSlot extends React.Component {
         this.cachCanvas.setAttribute('height', 50);
         this.cachCtx.fillStyle = 'green';
         this.cachCtx.fillRect(0, 0, this.cachCanvas.width, this.cachCanvas.height);
-        this.slotRepeatTimes = 7;
+        this.slotRepeatTimes = 5;
     }
 
     componentDidMount() {
@@ -51,7 +51,7 @@ class WebGlSlot extends React.Component {
     init() {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(70, this.width / this.height, 1, 1000);
-        this.camera.position.z = 500;
+        this.camera.position.z = 700;
         this.scene.add(this.camera);
 
         // this.refs['testCan'].appendChild(this.cachCanvas);
@@ -59,9 +59,9 @@ class WebGlSlot extends React.Component {
         this.texture.needsUpdate = true;
         let perimeter = this.slotImages.length * this.props.imgHeight;
         console.log('perimeter', perimeter);
-        perimeter = 250;
+        perimeter = 400;
         var material = new THREE.MeshBasicMaterial({ map: this.texture });
-        var geometry = new THREE.CylinderGeometry( perimeter, perimeter, 100, 32 );
+        var geometry = new THREE.CylinderGeometry( perimeter, perimeter, perimeter, 32 );
         this.mesh = new THREE.Mesh( geometry, material );
         this.mesh.rotation.z = Math.PI/2;
         this.scene.add( this.mesh );

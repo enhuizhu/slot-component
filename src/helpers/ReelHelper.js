@@ -1,6 +1,6 @@
 'use strict';
 
-class SlotHelper {
+class ReelHelper {
 	static messImages(arr) {
 		const cloneArr = [...arr];
 		let newArr  = [];
@@ -14,7 +14,7 @@ class SlotHelper {
 		return newArr;
 	}
 
-	static generateSlotImages(arr, repeatTimes) {
+	static generateReelImages(arr, repeatTimes) {
 		const messArr = [...arr];
 		let newArr = [];
 			
@@ -25,7 +25,7 @@ class SlotHelper {
 		return newArr;
 	}
 
-	static getSlotPos(viewHeight, imgH, index) {
+	static getReelPos(viewHeight, imgH, index) {
 		return 0.5 * viewHeight - (index + 0.5) * imgH
 	}
 
@@ -35,7 +35,7 @@ class SlotHelper {
 
 	static getStopPos(numberOfImgs, viewHeight, imgH, index) {
 		let indexInGroup = this.getStopIndex(numberOfImgs, index);
-		return this.getSlotPos(viewHeight, imgH, indexInGroup);
+		return this.getReelPos(viewHeight, imgH, indexInGroup);
 	}
 
 	static getStartIndex(numberOfImgs, repeatTimes, index) {
@@ -44,8 +44,8 @@ class SlotHelper {
 
 	static getStartPos(numberOfImgs, viewHeight, imgH, repeatTimes, index) {
 		let indexInGroup = this.getStartIndex(numberOfImgs, repeatTimes, index);
-		return this.getSlotPos(viewHeight, imgH, indexInGroup);
+		return this.getReelPos(viewHeight, imgH, indexInGroup);
 	}
 }
 
-export default SlotHelper;
+export default ReelHelper;
